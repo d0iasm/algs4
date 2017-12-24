@@ -12,28 +12,23 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 
 public class Percolation {
-    private static final int BLOCK = 0;
-    private static final int OPEN = 1;
-    private static final int FULL = 2;
+    private static final boolean BLOCK = false;
+    private static final boolean OPEN = true;
     private static final int TOP = 0;
     private final int bottom;
     private final WeightedQuickUnionUF wqu;
     private final int size;
-    private int[][] grid;
+    private boolean[][] grid;
     private int openedNum = 0;
     
     public Percolation(int n) {
+        if (n <= 0) {
+            throw new IllegalArgumentException("constructor size is out of bounds");
+        }
         size = n;
         bottom = n*n+1;
-        grid = new int[n][n];
+        grid = new boolean[n][n];
         wqu = new WeightedQuickUnionUF(n*n+2);
-        for (int i = 0; i < n; i++) {
-            wqu.union(TOP, getWquIndex(1, i+1));
-            wqu.union(bottom, getWquIndex(n, i+1));
-            for (int j = 0; j < n; j++) {
-                grid[i][j] = BLOCK;
-            }
-        }
     }
     
     public void open(int row, int col) {
@@ -43,45 +38,45 @@ public class Percolation {
         grid[row-1][col-1] = OPEN;
         openedNum += 1;
         
+        int index = getWquIndex(row, col);
+        
+        if (row == 1) {
+            wqu.union(index, TOP);
+        }
+        if (row == size) {
+            wqu.union(index, bottom);
+        }
+        
         if (row < size) {
             if (isOpen(row+1, col)) {
-                wqu.union(getWquIndex(row, col), getWquIndex(row+1, col));
-                grid[row-1][col-1] = FULL;
-                grid[row][col-1] = FULL;
+                wqu.union(index, getWquIndex(row+1, col));
             }
         }
         if (row-1 > 0) {
             if (isOpen(row-1, col)) {
-                wqu.union(getWquIndex(row, col), getWquIndex(row-1, col));
-                grid[row-1][col-1] = FULL;
-                grid[row-2][col-1] = FULL;
+                wqu.union(index, getWquIndex(row-1, col));
             }
         }
         if (col < size) {
             if (isOpen(row, col+1)) {
-                wqu.union(getWquIndex(row, col), getWquIndex(row, col+1));
-                grid[row-1][col-1] = FULL;
-                grid[row-1][col] = FULL;
+                wqu.union(index, getWquIndex(row, col+1));
             }
         }
         if (col-1 > 0) {
             if (isOpen(row, col-1)) {
-                wqu.union(getWquIndex(row, col), getWquIndex(row, col-1));
-                grid[row-1][col-1] = FULL;
-                grid[row-1][col-2] = FULL;
+                wqu.union(index, getWquIndex(row, col-1));
             }
         }
     }
     
     public boolean isOpen(int row, int col) {
         checkBounds(row, col);
-        return grid[row-1][col-1] > BLOCK;
+        return grid[row-1][col-1];
     }
     
     public boolean isFull(int row, int col) {
         checkBounds(row, col);
-        if (grid[row-1][col-1] == FULL) return true;
-        return false;
+        return wqu.connected(TOP, getWquIndex(row, col));
     } 
     
     public int numberOfOpenSites() {
