@@ -77,7 +77,7 @@ public class Percolation {
     
     public boolean isOpen(int row, int col) {
         checkBounds(row, col);
-        return grid[row-1][col-1] == open;
+        return grid[row-1][col-1] > block;
     }
     
     public boolean isFull(int row, int col) {
@@ -91,14 +91,10 @@ public class Percolation {
     }
     
     public boolean percolates() {
-        System.out.println(Arrays.deepToString(grid));
-        System.out.println(wqu.connected(top, bottom));
-        System.out.println(wqu.count());
         return wqu.connected(top, bottom);
     }
         
     private int getWquIndex(int i, int j) {
-        System.out.println(size * (i-1) + j);
         return size * (i-1) + j;
     }
     
@@ -112,17 +108,6 @@ public class Percolation {
     }
     
     public static void main(String[] args) {
-        final int SIZE = 3;
-        
-        Percolation p = new Percolation(SIZE);
-        p.open(1, 1);
-        p.open(2, 2);
-        p.open(3, 2);
-        p.open(1, 2);
-        p.percolates();
-    }
-    
-    private void hoge() {
         final int TESTS = 100;
         final int GRID_SIZE = 3;
          
@@ -140,8 +125,8 @@ public class Percolation {
             ct = 0;
             perc = new Percolation(GRID_SIZE);
             while (!perc.percolates()) {
-                row = StdRandom.uniform(GRID_SIZE-1) + 1;
-                col = StdRandom.uniform(GRID_SIZE-1) + 1;
+                row = StdRandom.uniform(GRID_SIZE) + 1;
+                col = StdRandom.uniform(GRID_SIZE) + 1;
                 perc.open(row, col);
                 ct++;
                 System.out.println("Open(" + row + ", " + col + ") " + "Count: " + ct);
