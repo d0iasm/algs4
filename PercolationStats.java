@@ -5,7 +5,7 @@
  *  
  *  Description: Percolation.
  * 
- *****************************************************************************/
+ ******************************************************************************/
 
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
@@ -13,8 +13,9 @@ import edu.princeton.cs.algs4.StdOut;
 
 
 public class PercolationStats {
-    private double[] tries;
-    private int trials;
+    private static final double CONFIDENCE_95 = 1.96;
+    private final double[] tries;
+    private final int trials;
     
     public PercolationStats(int n, int trials) {
         if (n <= 0) {
@@ -48,10 +49,10 @@ public class PercolationStats {
         return StdStats.stddev(tries);
     }
     public double confidenceLo() {
-        return mean() - 1.96 * stddev() / Math.sqrt(trials);
+        return mean() - CONFIDENCE_95 * stddev() / Math.sqrt(trials);
     }
     public double confidenceHi() {
-        return mean() + 1.96 * stddev() / Math.sqrt(trials);
+        return mean() + CONFIDENCE_95 * stddev() / Math.sqrt(trials);
     }
 
     public static void main(String[] args) {
@@ -60,10 +61,10 @@ public class PercolationStats {
         }
 
         try {
-            int N = Integer.parseInt(args[0]);
-            int T = Integer.parseInt(args[1]);
+            int n = Integer.parseInt(args[0]);
+            int t = Integer.parseInt(args[1]);
 
-            PercolationStats percolationStats = new PercolationStats(N, T);
+            PercolationStats percolationStats = new PercolationStats(n, t);
             StdOut.println("mean                    = "
                     + percolationStats.mean());
             StdOut.println("stddev                  = "
@@ -71,7 +72,8 @@ public class PercolationStats {
             StdOut.println("95% confidence interval = ["
                     + percolationStats.confidenceLo() + ", "
                     + percolationStats.confidenceHi() + "]");
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             StdOut.println("Argument must be an integer");
             return;
         }
