@@ -10,31 +10,29 @@
  ******************************************************************************/
 
 import java.util.Iterator;
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
-    private int N;
+    private int n;
     private Item[] a;
 
     public RandomizedQueue() {
         a = (Item[]) new Object[1];
-        N = 0;
+        n = 0;
     }
     
     public boolean isEmpty() {
-        return N == 0;
+        return n == 0;
     }
     
     public int size() {
-        return N;
+        return n;
     }
     
     private void resize(int max) {
         Item[] temp = (Item[]) new Object[max];
-        for (int i = 0; i < N; i++)
+        for (int i = 0; i < n; i++)
             temp[i] = a[i];
         
         a = temp;
@@ -43,20 +41,20 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public void enqueue(Item item) {
         if (item == null)
             throw new java.lang.NullPointerException();
-        if (N == a.length)
+        if (n == a.length)
             resize(2 * a.length);
-        a[N++] = item;
+        a[n++] = item;
     }
     
     public Item dequeue() {
         if (isEmpty())
             throw new java.util.NoSuchElementException();
-        int idx = StdRandom.uniform(N);  // random index
-        Item item = a[idx];              // assign random item
-        a[idx] = a[N-1];            // swap last element
-        a[N-1] = null;              // make last element null
-        N--;                  // decrement N
-        if (N > 0 && N == a.length/4)    // resize if necessary
+        int idx = StdRandom.uniform(n);
+        Item item = a[idx];
+        a[idx] = a[n-1];
+        a[n-1] = null;
+        n--;
+        if (n > 0 && n == a.length/4)
             resize(a.length/2);
         return item;
     }
@@ -64,7 +62,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public Item sample() {
         if (isEmpty())
             throw new java.util.NoSuchElementException();
-        int idx = StdRandom.uniform(N);
+        int idx = StdRandom.uniform(n);
         return a[idx];
     }
     
@@ -73,17 +71,20 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
     
     private class ArrayIterator implements Iterator<Item> {
-        private int i = N;
-        public boolean hasNext() {  return i > 0;   }
-        public Item next()    {
+        private int i = n;
+
+        public boolean hasNext() {
+            return i > 0;
+        }
+
+        public Item next() {
             if (!hasNext())
                 throw new java.util.NoSuchElementException();
             return a[--i];
         }
+
         public void remove() {
             throw new java.lang.UnsupportedOperationException();
         }
     }
-    
-    public static void main(String[] args) {}
 }

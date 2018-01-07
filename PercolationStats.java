@@ -75,7 +75,6 @@ public class PercolationStats {
         }
         catch (NumberFormatException e) {
             StdOut.println("Argument must be an integer");
-            return;
         }
     }
 }
